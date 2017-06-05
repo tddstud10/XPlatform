@@ -138,11 +138,12 @@ type internal XTestDiscoverer(obj : obj) =
         |> XExtensionUri
     
     interface IXTestDiscoverer with
+        member __.Id : string = obj.GetType().FullName 
+        member __.ExtensionUri : XExtensionUri = extensionUri
         member __.DiscoverTests(sources, logger, discoverySink) = 
             vstd.DiscoverTests
                 (sources, IDiscoveryContext.Create(), IMessageLogger.Create logger, 
                  ITestCaseDiscoverySink.Create discoverySink)
-        member __.ExtensionUri : XExtensionUri = extensionUri
 
 type internal XTestExecutor(obj : obj) = 
     let vste = obj :?> ITestExecutor
@@ -156,87 +157,9 @@ type internal XTestExecutor(obj : obj) =
         |> XExtensionUri
     
     interface IXTestExecutor with
+        member __.Id : string = obj.GetType().FullName 
         member __.ExtensionUri : XExtensionUri = extensionUri
         member __.Cancel() = vste.Cancel()
         member __.RunTests(tests : seq<XTestCase>, executionSink : IXTestCaseExecutionSink) = 
             let tests = tests |> Seq.map (fun x -> x.TestCase |> DataContract.deserialize<TestCase>)
             vste.RunTests(tests, IRunContext.CreateRunContext(), IFrameworkHandle.Create executionSink)
-
-module AdapterLoader = 
-    open System
-    open System.Diagnostics
-    open System.IO
-    open System.Reflection
-    
-    type internal AdapterInfo = 
-        { Discoverer : string
-          Executor : string }
-    
-    type internal AdapterInfoMap = Map<string, AdapterInfo>
-    
-    let private knownAdaptersMap : AdapterInfoMap = 
-        [ ("xunit.runner.visualstudio.testadapter.dll", 
-           { Discoverer = "Xunit.Runner.VisualStudio.TestAdapter.VsTestRunner"
-             Executor = "Xunit.Runner.VisualStudio.TestAdapter.VsTestRunner" })
-          ("NUnit.VisualStudio.TestAdapter.dll", 
-           { Discoverer = "NUnit.VisualStudio.TestAdapter.NUnitTestDiscoverer"
-             Executor = "NUnit.VisualStudio.TestAdapter.NUnitTestExecutor" })
-          ("NUnit3.TestAdapter.dll", 
-           { Discoverer = "NUnit.VisualStudio.TestAdapter.NUnit3TestDiscoverer"
-             Executor = "NUnit.VisualStudio.TestAdapter.NUnit3TestExecutor" }) ]
-        |> Map.ofList
-    
-    let private createAdapter<'TIFace, 'TImpl> (adapterMap : AdapterInfoMap) selector path = 
-        let loadAssembly = Assembly.LoadFrom
-        
-        let loadType a t = 
-            let asm = loadAssembly a
-            t
-            |> asm.GetType
-            |> Option.ofNull
-        
-        let asmResolver searchPath = 
-            let innerFn _ (args : ResolveEventArgs) = 
-                [ "*.dll"; "*.exe" ]
-                |> Seq.map ((+) (AssemblyName(args.Name).Name))
-                |> Seq.collect (fun name -> Directory.EnumerateFiles(searchPath, name, SearchOption.AllDirectories))
-                |> Seq.tryFind File.Exists
-                |> Option.fold (fun _ -> loadAssembly) null
-            innerFn
-        
-        let resolver = asmResolver <| Path.GetDirectoryName path
-        try 
-            Trace.TraceInformation("Attempting to load Test Adapter {0} from {1}", typeof<'TIFace>, path)
-            AppDomain.CurrentDomain.add_AssemblyResolve (ResolveEventHandler resolver)
-            let res = 
-                adapterMap
-                |> Map.tryFind (Path.GetFileName path)
-                |> Option.bind (fun ai -> 
-                       loadType path (selector ai) |> Option.map (fun t -> 
-                                                          let inner = t |> Activator.CreateInstance
-                                                          let outer = 
-                                                              (typeof<'TImpl>, [| inner |]) |> Activator.CreateInstance
-                                                          outer :?> 'TIFace))
-            Trace.TraceInformation("Loaded Test Adapter {0} from {1}", typeof<'TIFace>, path)
-            res
-        finally
-            AppDomain.CurrentDomain.remove_AssemblyResolve (ResolveEventHandler resolver)
-    
-    let private findAdapterAssemblies dir = 
-        if Directory.Exists dir then Directory.EnumerateFiles(dir, "*.testadapter.dll", SearchOption.AllDirectories)
-        else Seq.empty<string>
-    
-    let private loadDependencies _ = 
-        [ "msdia120typelib_clr0200.dll"; "Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" ]
-        |> List.map (Prelude.tuple2 (Path.getLocalPath()) >> Path.Combine)
-        |> List.iter (Assembly.LoadFrom >> ignore)
-    
-    let LoadDiscoverers = 
-        Prelude.tee loadDependencies
-        >> findAdapterAssemblies
-        >> Seq.choose (createAdapter<IXTestDiscoverer, XTestDiscoverer> knownAdaptersMap (fun x -> x.Discoverer))
-    
-    let LoadExecutors = 
-        Prelude.tee loadDependencies
-        >> findAdapterAssemblies
-        >> Seq.choose (createAdapter<IXTestExecutor, XTestExecutor> knownAdaptersMap (fun x -> x.Executor))
