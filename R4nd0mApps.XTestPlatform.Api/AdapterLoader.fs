@@ -11,13 +11,13 @@ module AdapterLoader =
         |> Uri
         |> fun x -> x.LocalPath
         |> Path.GetDirectoryName
-        |> Prelude.flip Prelude.tuple2 "R4nd0mApps.TestPlatform.VS.Implementation.dll"
+        |> Prelude.flip Prelude.tuple2 "Xtensions/VS/R4nd0mApps.XTestPlatform.VS.dll"
         |> Path.Combine
         |> fun a -> Assembly.LoadFrom(a)
         |> fun a -> a.GetTypes()
         |> Seq.find (fun x -> x.Name = "AdapterLoader")
         |> fun t -> t.GetProperty(apiName, BindingFlags.Public ||| BindingFlags.Static)
-        |> fun p -> (p.GetValue(null) :?> string -> 'T) packagesPath
+        |> fun p -> p.GetValue(null) :?> (string -> 'T) <| packagesPath
     
-    let LoadDiscoverers p = invokeAPI<seq<IXTestDiscoverer>> "LoadDiscoverers" p
-    let LoadExecutors p = invokeAPI<seq<IXTestExecutor>> "LoadExecutors" p
+    let LoadDiscoverers = invokeAPI<seq<IXTestDiscoverer>> "LoadDiscoverers"
+    let LoadExecutors = invokeAPI<seq<IXTestExecutor>> "LoadExecutors"
