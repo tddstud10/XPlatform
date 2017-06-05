@@ -1,12 +1,11 @@
 ﻿namespace R4nd0mApps.XTestPlatform.Api
 
-open System
-open System.Runtime.Serialization
-open System.Diagnostics
 open Microsoft.FSharp.Reflection
+open System
+open System.Diagnostics
 open System.Reflection
+open System.Runtime.Serialization
 
-// TODO: Split into differnt files
 type XExtensionUri = Uri
 
 [<KnownType("KnownTypes")>]
@@ -29,18 +28,6 @@ type XTestCase =
       LineNumber : int
       Source : string }
 
-type IXMessageLogger = 
-    abstract SendMessage : testMessageLevel:XTestMessageLevel * message:string -> unit
-
-type IXTestCaseDiscoverySink = 
-    abstract SendTestCase : discoveredTest:XTestCase -> unit
-
-type IXTestDiscoverer = 
-    abstract Id : string
-    abstract ExtensionUri : XExtensionUri
-    abstract DiscoverTests : sources:seq<string> * logger:IXMessageLogger * discoverySink:IXTestCaseDiscoverySink
-     -> unit
-
 [<KnownType("KnownTypes")>]
 type XTestOutcome = 
     | None
@@ -61,6 +48,18 @@ type XTestResult =
       Outcome : XTestOutcome
       StartTime : DateTimeOffset
       TestCase : XTestCase }
+
+type IXMessageLogger = 
+    abstract SendMessage : testMessageLevel:XTestMessageLevel * message:string -> unit
+
+type IXTestCaseDiscoverySink = 
+    abstract SendTestCase : discoveredTest:XTestCase -> unit
+
+type IXTestDiscoverer = 
+    abstract Id : string
+    abstract ExtensionUri : XExtensionUri
+    abstract DiscoverTests : sources:seq<string> * logger:IXMessageLogger * discoverySink:IXTestCaseDiscoverySink
+     -> unit
 
 type IXTestCaseExecutionSink = 
     inherit IXMessageLogger

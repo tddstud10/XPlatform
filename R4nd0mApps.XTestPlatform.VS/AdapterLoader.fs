@@ -1,6 +1,10 @@
 ﻿namespace R4nd0mApps.XTestPlatform.Implementation.VS
 
 open R4nd0mApps.XTestPlatform.Api
+open System
+open System.Diagnostics
+open System.IO
+open System.Reflection
 
 type AdapterInfo = 
     { Discoverer : string
@@ -9,11 +13,6 @@ type AdapterInfo =
 type AdapterInfoMap = Map<string, AdapterInfo>
 
 module AdapterLoader = 
-    open System
-    open System.Diagnostics
-    open System.IO
-    open System.Reflection
-    
     let private knownAdaptersMap : AdapterInfoMap = 
         [ ("xunit.runner.visualstudio.testadapter.dll".ToUpperInvariant(), 
            { Discoverer = "Xunit.Runner.VisualStudio.TestAdapter.VsTestRunner"
@@ -48,16 +47,17 @@ module AdapterLoader =
         try 
             Trace.TraceInformation("Attempting to load Test Adapter {0} from {1}", typeof<'TIFace>, path)
             AppDomain.CurrentDomain.add_AssemblyResolve (ResolveEventHandler resolver)
-            let createAdapter (t: Type) =
+            let createAdapter (t : Type) = 
                 let inner = t |> Activator.CreateInstance
-                let outer = 
-                    (typeof<'TImpl>, [| inner |]) |> Activator.CreateInstance
+                let outer = (typeof<'TImpl>, [| inner |]) |> Activator.CreateInstance
                 outer :?> 'TIFace
-            let res =
+            
+            let res = 
                 adapterMap
                 |> Map.tryFind (Path.GetFileName(path).ToUpperInvariant())
-                |> Option.bind (fun ai -> loadType path (selector ai)) 
+                |> Option.bind (fun ai -> loadType path (selector ai))
                 |> Option.map createAdapter
+            
             Trace.TraceInformation("Loaded Test Adapter {0} from {1}", typeof<'TIFace>, path)
             res
         finally
@@ -77,13 +77,11 @@ module AdapterLoader =
         >> findAdapterAssemblies
         >> Seq.choose (createAdapter<IXTestDiscoverer, XTestDiscoverer> adaptersMap (fun x -> x.Discoverer))
     
-    let LoadDiscoverers = 
-        LoadDiscoverersWithMap knownAdaptersMap
+    let LoadDiscoverers = LoadDiscoverersWithMap knownAdaptersMap
     
     let LoadExecutorsWithMap adaptersMap = 
         Prelude.tee loadDependencies
         >> findAdapterAssemblies
         >> Seq.choose (createAdapter<IXTestExecutor, XTestExecutor> adaptersMap (fun x -> x.Executor))
-
-    let LoadExecutors = 
-        LoadExecutorsWithMap knownAdaptersMap 
+    
+    let LoadExecutors = LoadExecutorsWithMap knownAdaptersMap

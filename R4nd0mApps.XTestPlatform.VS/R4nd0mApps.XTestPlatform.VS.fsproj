@@ -61,7 +61,9 @@
       <Link>AssemblyInfo.fs</Link>
     </Compile>
     <Content Include="paket.references" />
-    <Compile Include="Domain.fs" />
+    <Compile Include="DataContract.fs" />
+    <Compile Include="Converters.fs" />
+    <Compile Include="Adapters.fs" />
     <Compile Include="AdapterLoader.fs" />
   </ItemGroup>
   <ItemGroup>
