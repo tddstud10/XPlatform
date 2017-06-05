@@ -5,12 +5,12 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0a51d50a-893d-5193-9677-2acf5dd943a4}</ProjectGuid>
+    <ProjectGuid>{0a62d50a-893d-5193-9677-2acf5dd943a4}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>R4nd0mApps.XTestPlatform.VS.UnitTests</RootNamespace>
-    <AssemblyName>R4nd0mApps.XTestPlatform.VS.UnitTests</AssemblyName>
+    <RootNamespace>R4nd0mApps.XTestPlatform.UnitTests</RootNamespace>
+    <AssemblyName>R4nd0mApps.XTestPlatform.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <Name>R4nd0mApps.XTestPlatform.VS.UnitTests</Name>
+    <Name>R4nd0mApps.XTestPlatform.UnitTests</Name>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -23,7 +23,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\R4nd0mApps.XTestPlatform.VS.UnitTests.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\R4nd0mApps.XTestPlatform.UnitTests.XML</DocumentationFile>
     <OtherFlags>
     </OtherFlags>
   </PropertyGroup>
@@ -34,7 +34,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\R4nd0mApps.XTestPlatform.VS.UnitTests.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\R4nd0mApps.XTestPlatform.UnitTests.XML</DocumentationFile>
     <OtherFlags>
     </OtherFlags>
   </PropertyGroup>
@@ -125,7 +125,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /frys $(ProjectDir)TestData $(TargetDir)TestData\
+    <PostBuildEvent>xcopy /frys $(ProjectDir)..\TestData $(TargetDir)TestData\
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

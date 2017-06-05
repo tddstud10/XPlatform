@@ -26,5 +26,11 @@
     <file src="..\build\R4nd0mApps.XTestPlatform.VS.pdb" target="lib\Xtensions\VS" /> 
     <file src="..\R4nd0mApps.XTestPlatform.VS\ObjectModel\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\Xtensions\VS" /> 
     <file src="..\R4nd0mApps.XTestPlatform.VS\ObjectModel\msdia120typelib_clr0200.dll" target="lib\Xtensions\VS" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.XUnit.dll" target="lib\Xtensions\XUnit" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.XUnit.pdb" target="lib\Xtensions\XUnit" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.NUnit2.dll" target="lib\Xtensions\NUnit2" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.NUnit2.pdb" target="lib\Xtensions\NUnit2" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.NUnit3.dll" target="lib\Xtensions\NUnit3" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.NUnit3.pdb" target="lib\Xtensions\NUnit3" /> 
   </files>
 </package>
