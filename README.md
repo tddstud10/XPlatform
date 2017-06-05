@@ -1,0 +1,1 @@
+﻿A x-platform test platform inspired by Microsoft.VisualStudio.TestPlatform.ObjectModel

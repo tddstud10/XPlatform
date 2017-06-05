@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">    
+    <id>@project@</id>
+    <version>@build.number@</version>
+    <authors>@authors@</authors>
+    <owners>@authors@</owners>
+    <summary>@summary@</summary>
+    <licenseUrl>https://github.com/tddstud10/tddstud10/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/tddstud10/tddstud10</projectUrl>
+    <iconUrl>https://github.com/tddstud10/tddstud10/icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>@description@</description>
+    <releaseNotes>@releaseNotes@</releaseNotes>
+    <copyright>Partho P. Das 2016-3016</copyright>    
+    <tags>Test Platform Cross Platform</tags>
+    @dependencies@
+    <references>
+      <reference file="R4nd0mApps.XTestPlatform.Api.dll" />
+    </references>  
+  </metadata>
+  <files>
+    <file src="..\build\R4nd0mApps.XTestPlatform.Api.dll" target="lib" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.Api.pdb" target="lib" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.VS.Implementation.dll" target="lib\Extensions\VS" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.VS.Implementation.pdb" target="lib\Extensions\VS" /> 
+    <file src="..\R4nd0mApps.XTestPlatform.VS.Implementation\ObjectModel\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\Extensions\VS" /> 
+    <file src="..\R4nd0mApps.XTestPlatform.VS.Implementation\ObjectModel\msdia120typelib_clr0200.dll" target="lib\Extensions\VS" /> 
+  </files>
+</package>
