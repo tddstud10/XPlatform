@@ -22,9 +22,9 @@
   <files>
     <file src="..\build\R4nd0mApps.XTestPlatform.Api.dll" target="lib" /> 
     <file src="..\build\R4nd0mApps.XTestPlatform.Api.pdb" target="lib" /> 
-    <file src="..\build\R4nd0mApps.XTestPlatform.VS.Implementation.dll" target="lib\Extensions\VS" /> 
-    <file src="..\build\R4nd0mApps.XTestPlatform.VS.Implementation.pdb" target="lib\Extensions\VS" /> 
-    <file src="..\R4nd0mApps.XTestPlatform.VS.Implementation\ObjectModel\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\Extensions\VS" /> 
-    <file src="..\R4nd0mApps.XTestPlatform.VS.Implementation\ObjectModel\msdia120typelib_clr0200.dll" target="lib\Extensions\VS" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.VS.dll" target="lib\Xtensions\VS" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.VS.pdb" target="lib\Xtensions\VS" /> 
+    <file src="..\R4nd0mApps.XTestPlatform.VS\ObjectModel\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\Xtensions\VS" /> 
+    <file src="..\R4nd0mApps.XTestPlatform.VS\ObjectModel\msdia120typelib_clr0200.dll" target="lib\Xtensions\VS" /> 
   </files>
 </package>
