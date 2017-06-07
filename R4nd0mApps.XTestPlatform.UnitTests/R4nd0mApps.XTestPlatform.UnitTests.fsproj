@@ -99,7 +99,7 @@
     <Compile Include="..\AssemblyInfo.fs">
       <Link>AssemblyInfo.fs</Link>
     </Compile>
-    <Compile Include="AdapterLoaderTests.fs" />
+    <Compile Include="AdapterTests.fs" />
     <Content Include="paket.references" />
     <Content Include="App.config" />
   </ItemGroup>
@@ -121,6 +121,11 @@
     <ProjectReference Include="..\R4nd0mApps.XTestPlatform.VS\R4nd0mApps.XTestPlatform.VS.fsproj">
       <Name>R4nd0mApps.XTestPlatform.VS</Name>
       <Project>{0a51d50a-893d-4082-9677-2acf5dd943a4}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\R4nd0mApps.XTestPlatform.XUnit\R4nd0mApps.XTestPlatform.XUnit.fsproj">
+      <Name>R4nd0mApps.XTestPlatform.XUnit</Name>
+      <Project>{0a51e61b-893d-4082-9677-2acf5dd943a4}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

@@ -16,14 +16,21 @@ type internal XTestDiscoverer(obj : obj) =
         |> Seq.head
         |> fun x -> x.ExecutorUri
         |> XExtensionUri
+
+    let messageLogged = Event<_>()
+    let testDiscovered = Event<_>()
     
     interface IXTestDiscoverer with
         member __.Id : string = obj.GetType().FullName
         member __.ExtensionUri : XExtensionUri = extensionUri
-        member __.DiscoverTests(sources, logger, discoverySink) = 
+        member __.DiscoverTests(sources: seq<string>): unit = 
             vstd.DiscoverTests
-                (sources, IDiscoveryContext.Create(), IMessageLogger.Create logger, 
-                 ITestCaseDiscoverySink.Create discoverySink)
+                (sources, IDiscoveryContext.Create(), IMessageLogger.CreateMessageLogger messageLogged, 
+                 ITestCaseDiscoverySink.Create testDiscovered)
+        member __.Cancel(): unit = 
+            failwith "Not implemented yet"
+        member __.MessageLogged: IEvent<XTestMessageLevel * string> = messageLogged.Publish
+        member __.TestDiscovered: IEvent<XTestCase> = testDiscovered.Publish
 
 type internal XTestExecutor(obj : obj) = 
     let vste = obj :?> ITestExecutor
@@ -35,11 +42,16 @@ type internal XTestExecutor(obj : obj) =
         |> Seq.head
         |> fun x -> x.ExtensionUri
         |> XExtensionUri
+
+    let messageLogged = Event<_>()
+    let testCompleted = Event<_>()
     
     interface IXTestExecutor with
         member __.Id : string = obj.GetType().FullName
         member __.ExtensionUri : XExtensionUri = extensionUri
-        member __.Cancel() = vste.Cancel()
-        member __.RunTests(tests : seq<XTestCase>, executionSink : IXTestCaseExecutionSink) = 
+        member __.RunTests(tests: seq<XTestCase>): unit = 
             let tests = tests |> Seq.map (fun x -> x.TestCase |> DataContract.deserialize<TestCase>)
-            vste.RunTests(tests, IRunContext.CreateRunContext(), IFrameworkHandle.Create executionSink)
+            vste.RunTests(tests, IRunContext.CreateRunContext(), IFrameworkHandle.CreateFrameworkHandle messageLogged testCompleted)
+        member __.Cancel() = vste.Cancel()
+        member __.MessageLogged: IEvent<XTestMessageLevel * string> = messageLogged.Publish
+        member __.TestCompleted: IEvent<XTestResult> = testCompleted.Publish

@@ -3,5 +3,7 @@
 open R4nd0mApps.XTestPlatform.Api
 
 module AdapterLoader = 
-    let LoadDiscoverers : string -> seq<IXTestDiscoverer> = Prelude.undefined
-    let LoadExecutors : string -> seq<IXTestExecutor> = Prelude.undefined
+    let LoadDiscoverers : string -> seq<IXTestDiscoverer> = 
+        fun _ -> [XUnitTestDiscoverer() :> IXTestDiscoverer] :> seq<_>
+    let LoadExecutors : string -> seq<IXTestExecutor> = 
+        fun _ -> [XUnitTestExecutor() :> IXTestExecutor] :> seq<_>

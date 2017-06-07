@@ -1,23 +1,28 @@
-﻿namespace R4nd0mApps.XTestPlatform.Api
+﻿module R4nd0mApps.XTestPlatform.Api.AdapterLoader
 
 open System
+open System.IO
+open System.Reflection
 
-module AdapterLoader = 
-    open System.IO
-    open System.Reflection
-    
-    let private invokeAPI<'T> apiName packagesPath = 
+let private invokeAPI<'T> adapterPaths apiName packagesPath = 
+    let x =
         Assembly.GetExecutingAssembly().CodeBase
         |> Uri
         |> fun x -> x.LocalPath
         |> Path.GetDirectoryName
-        |> Prelude.flip Prelude.tuple2 "Xtensions/VS/R4nd0mApps.XTestPlatform.VS.dll"
-        |> Path.Combine
-        |> fun a -> Assembly.LoadFrom(a)
-        |> fun a -> a.GetTypes()
-        |> Seq.find (fun x -> x.Name = "AdapterLoader")
-        |> fun t -> t.GetProperty(apiName, BindingFlags.Public ||| BindingFlags.Static)
-        |> fun p -> p.GetValue(null) :?> (string -> 'T) <| packagesPath
-    
-    let LoadDiscoverers = invokeAPI<seq<IXTestDiscoverer>> "LoadDiscoverers"
-    let LoadExecutors = invokeAPI<seq<IXTestExecutor>> "LoadExecutors"
+        |> fun x -> adapterPaths |> Seq.map (Prelude.tuple2 x)
+        |> Seq.map (Path.Combine >> Assembly.LoadFrom)
+        |> Seq.collect (fun a -> a.GetTypes())
+        |> Seq.choose (fun x -> 
+               if x.Name = "AdapterLoader" then Some x
+               else Option.None)
+    x
+    |> Seq.map 
+           (fun t -> 
+           t.GetMethod(apiName, BindingFlags.Public ||| BindingFlags.Static).Invoke(null, [| packagesPath |]) :?> seq<'T>)
+    |> Seq.collect id
+
+let LoadDiscoverersFromPath ap = invokeAPI<IXTestDiscoverer> ap "LoadDiscoverers"
+let LoadExecutorsFromPath ap = invokeAPI<IXTestExecutor> ap "LoadExecutors"
+let LoadDiscoverers x = LoadDiscoverersFromPath [ "Xtensions/VS/R4nd0mApps.XTestPlatform.VS.dll" ] x
+let LoadExecutors x = LoadExecutorsFromPath [ "Xtensions/VS/R4nd0mApps.XTestPlatform.VS.dll" ] x

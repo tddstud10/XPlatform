@@ -77,11 +77,11 @@ module AdapterLoader =
         >> findAdapterAssemblies
         >> Seq.choose (createAdapter<IXTestDiscoverer, XTestDiscoverer> adaptersMap (fun x -> x.Discoverer))
     
-    let LoadDiscoverers = LoadDiscoverersWithMap knownAdaptersMap
+    let LoadDiscoverers : string -> seq<IXTestDiscoverer> = fun x -> LoadDiscoverersWithMap knownAdaptersMap x
     
     let LoadExecutorsWithMap adaptersMap = 
         Prelude.tee loadDependencies
         >> findAdapterAssemblies
         >> Seq.choose (createAdapter<IXTestExecutor, XTestExecutor> adaptersMap (fun x -> x.Executor))
     
-    let LoadExecutors = LoadExecutorsWithMap knownAdaptersMap
+    let LoadExecutors : string -> seq<IXTestExecutor> = fun x -> LoadExecutorsWithMap knownAdaptersMap x

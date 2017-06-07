@@ -30,9 +30,9 @@ type XTestCase with
           ExtensionUri = x.ExecutorUri }
 
 type ITestCaseDiscoverySink with
-    static member Create(x : IXTestCaseDiscoverySink) = 
+    static member Create(testDiscovered : Event<_>) = 
         { new ITestCaseDiscoverySink with
-              member __.SendTestCase(discoveredTest : TestCase) : unit = x.SendTestCase(XTestCase.Create discoveredTest) }
+              member __.SendTestCase(discoveredTest : TestCase) : unit = testDiscovered.Trigger(XTestCase.Create discoveredTest) }
 
 type XTestMessageLevel with
     static member Create(x : TestMessageLevel) = 
@@ -43,10 +43,10 @@ type XTestMessageLevel with
         | _ -> Prelude.undefined
 
 type IMessageLogger with
-    static member Create(x : IXMessageLogger) = 
+    static member CreateMessageLogger(messageLogged : Event<_>) = 
         { new IMessageLogger with
               member __.SendMessage(testMessageLevel : TestMessageLevel, message : string) : unit = 
-                  x.SendMessage(XTestMessageLevel.Create testMessageLevel, message) }
+                  messageLogged.Trigger(XTestMessageLevel.Create testMessageLevel, message) }
 
 type IRunContext with
     static member CreateRunContext() = 
@@ -77,12 +77,10 @@ type XTestResult with
           TestCase = XTestCase.Create x.TestCase
           Outcome = XTestOutcome.Create x.Outcome
           ErrorStackTrace = x.ErrorStackTrace
-          ErrorMessage = x.ErrorMessage
-          EndTime = x.EndTime
-          StartTime = x.StartTime }
+          ErrorMessage = x.ErrorMessage }
 
 type IFrameworkHandle with
-    static member Create(x : IXTestCaseExecutionSink) = 
+    static member CreateFrameworkHandle (msgLogged : Event<_>) (testCompleted : Event<_>) = 
         { new IFrameworkHandle with
               
               member __.EnableShutdownAfterTestRun 
@@ -97,8 +95,8 @@ type IFrameworkHandle with
               member __.RecordResult(testResult : TestResult) : unit = 
                   testResult
                   |> XTestResult.Create
-                  |> x.RecordResult
+                  |> testCompleted.Trigger
               
               member __.RecordStart(_ : TestCase) : unit = ()
               member __.SendMessage(testMessageLevel : TestMessageLevel, message : string) : unit = 
-                  x.SendMessage(XTestMessageLevel.Create testMessageLevel, message) }
+                  msgLogged.Trigger(XTestMessageLevel.Create testMessageLevel, message) }

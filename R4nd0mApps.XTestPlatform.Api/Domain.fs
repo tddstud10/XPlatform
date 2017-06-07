@@ -42,31 +42,23 @@ type XTestOutcome =
 [<CLIMutable>]
 type XTestResult = 
     { DisplayName : string
-      EndTime : DateTimeOffset
       ErrorMessage : string
       ErrorStackTrace : string
       Outcome : XTestOutcome
-      StartTime : DateTimeOffset
       TestCase : XTestCase }
-
-type IXMessageLogger = 
-    abstract SendMessage : testMessageLevel:XTestMessageLevel * message:string -> unit
-
-type IXTestCaseDiscoverySink = 
-    abstract SendTestCase : discoveredTest:XTestCase -> unit
 
 type IXTestDiscoverer = 
     abstract Id : string
     abstract ExtensionUri : XExtensionUri
-    abstract DiscoverTests : sources:seq<string> * logger:IXMessageLogger * discoverySink:IXTestCaseDiscoverySink
-     -> unit
-
-type IXTestCaseExecutionSink = 
-    inherit IXMessageLogger
-    abstract RecordResult : testResult:XTestResult -> unit
+    abstract DiscoverTests : sources:seq<string> -> unit
+    abstract Cancel : unit -> unit
+    abstract MessageLogged : IEvent<XTestMessageLevel * string>
+    abstract TestDiscovered : IEvent<XTestCase>
 
 type IXTestExecutor = 
     abstract Id : string
     abstract ExtensionUri : XExtensionUri
-    abstract RunTests : tests:seq<XTestCase> * executionSink:IXTestCaseExecutionSink -> unit
+    abstract RunTests : tests:seq<XTestCase> -> unit
     abstract Cancel : unit -> unit
+    abstract MessageLogged : IEvent<XTestMessageLevel * string>
+    abstract TestCompleted  : IEvent<XTestResult>
