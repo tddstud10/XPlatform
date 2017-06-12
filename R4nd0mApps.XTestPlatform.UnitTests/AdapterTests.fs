@@ -65,8 +65,7 @@ let normalizeTests ts =
     ts |> Seq.map (fun t -> 
               { t with TestCase = null
                        Id = Guid.Empty
-                       Source = Path.GetFileName(t.Source)
-                       CodeFilePath = Path.GetFileName(t.CodeFilePath) })
+                       Source = Path.GetFileName(t.Source) })
 let ``Test Data - Can discover tests`` : obj array seq = 
     [ "R4nd0mApps.XTestPlatform.XUnit.dll", "executor://xtestplatform/xUnit" ]
     @ if IsMSCLR then [ "R4nd0mApps.XTestPlatform.VS.dll", "executor://xunit/VsTestRunner2" ] else [ ]
@@ -120,7 +119,8 @@ let expectedTestResults =
 
 let normalizeTestResults = 
     let normalizeFailureInfoForMono x =
-        { x with Message = x.Message.Replace("\n", "\r\n"); CallStack = x.CallStack |> Array.take 1 }
+        if IsMSCLR then x
+        else { x with Message = x.Message.Replace("\n", "\r\n"); CallStack = x.CallStack |> Array.take 1 }
     Seq.map (fun t -> 
             { t with 
                 XTestResult.TestCase = emptyTestCase

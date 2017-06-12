@@ -32,7 +32,8 @@ type XTestCase with
 type ITestCaseDiscoverySink with
     static member Create(testDiscovered : Event<_>) = 
         { new ITestCaseDiscoverySink with
-              member __.SendTestCase(discoveredTest : TestCase) : unit = testDiscovered.Trigger(XTestCase.Create discoveredTest) }
+              member __.SendTestCase(discoveredTest : TestCase) : unit = 
+                  testDiscovered.Trigger(XTestCase.Create discoveredTest) }
 
 type XTestMessageLevel with
     static member Create(x : TestMessageLevel) = 
@@ -77,8 +78,11 @@ type XTestResult with
           TestCase = XTestCase.Create x.TestCase
           Outcome = XTestOutcome.Create x.Outcome
           FailureInfo = 
-              { Message = x.ErrorMessage
-                CallStack = XCallStackParser.parse x.ErrorStackTrace } |> Some }
+              if x.Outcome <> TestOutcome.Failed then None
+              else 
+                  { Message = x.ErrorMessage
+                    CallStack = XCallStackParser.parse x.ErrorStackTrace }
+                  |> Some }
 
 type IFrameworkHandle with
     static member CreateFrameworkHandle (msgLogged : Event<_>) (testCompleted : Event<_>) = 

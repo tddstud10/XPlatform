@@ -9,11 +9,11 @@ module Constants =
     let extensionUri = "executor://xtestplatform/xUnit" |> Uri
 
 module Converters = 
+    open R4nd0mApps.XTestPlatform.CecilUtils
+    open System.Collections.Generic
     open System.Security.Cryptography
     open System.Text
-    open System.Collections.Generic
-    open R4nd0mApps.XTestPlatform.CecilUtils
-
+    
     let guidFromString (s : string) = 
         s
         |> Encoding.Unicode.GetBytes
@@ -23,7 +23,8 @@ module Converters =
     
     type XTestCase with
         static member FromITestCase sfn src (tc : ITestCase) = 
-            let nd = NavigationDataProvider(src).GetNavigationData(tc.TestMethod.TestClass.Class.Name, tc.TestMethod.Method.Name)
+            use ndp = new NavigationDataProvider(src)
+            let nd = ndp.GetNavigationData(tc.TestMethod.TestClass.Class.Name, tc.TestMethod.Method.Name)
             { TestCase = sfn tc
               Id = (Constants.extensionUri.ToString() + tc.UniqueID) |> guidFromString
               FullyQualifiedName = 
@@ -45,4 +46,8 @@ module Converters =
         static member AddFailureInfo (msg : ITestFailed) (tr : XTestResult) = 
             { tr with FailureInfo = 
                           { Message = msg |> ExceptionUtility.CombineMessages
-                            CallStack = msg |> ExceptionUtility.CombineStackTraces |> XCallStackParser.parse } |> Some }
+                            CallStack = 
+                                msg
+                                |> ExceptionUtility.CombineStackTraces
+                                |> XCallStackParser.parse }
+                          |> Some }
