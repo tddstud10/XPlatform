@@ -54,4 +54,4 @@ type internal XTestExecutor(obj : obj) =
             vste.RunTests(tests, IRunContext.CreateRunContext(), IFrameworkHandle.CreateFrameworkHandle messageLogged testCompleted)
         member __.Cancel() = vste.Cancel()
         member __.MessageLogged: IEvent<XTestMessageLevel * string> = messageLogged.Publish
-        member __.TestCompleted: IEvent<XTestResult> = testCompleted.Publish
+        member __.TestExecuted: IEvent<XTestResult> = testCompleted.Publish

@@ -64,7 +64,7 @@ module AdapterLoader =
             AppDomain.CurrentDomain.remove_AssemblyResolve (ResolveEventHandler resolver)
     
     let private findAdapterAssemblies dir = 
-        if Directory.Exists dir then Directory.EnumerateFiles(dir, "*.testadapter.dll", SearchOption.AllDirectories)
+        if Directory.Exists dir then Directory.EnumerateFiles(dir, "*.TestAdapter.dll", SearchOption.AllDirectories)
         else Seq.empty<string>
     
     let private loadDependencies _ = 

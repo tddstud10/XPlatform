@@ -7,6 +7,7 @@ open System
 open System.IO
 
 MSBuildDefaults <- { MSBuildDefaults with Verbosity = Some MSBuildVerbosity.Minimal }
+setEnvironVar "MONO_ENV_OPTIONS" "--debug"
 let assemblyVersion = EnvironmentHelper.environVarOrDefault "GitVersion_AssemblySemVer" "65535.65535.65535.65535"
 
 // Directories
@@ -78,7 +79,8 @@ Target "Package" (fun _ ->
             Project = "R4nd0mApps.XTestPlatform"
             Description = "R4nd0mApps XTestPlatform"
             Version = EnvironmentHelper.environVarOrDefault "GitVersion_NuGetVersion" "65535.65535.65535-alpha99"
-            Dependencies = [ "FSharp.Core", ".." ]
+            Dependencies = [ "FSharp.Core", ".."
+                             "Mono.Cecil", ".." ]
                            |> List.map (fun (d,g) -> d, GetPackageVersion (packagesDir @@ g) d)
             OutputPath = buildDir })
 )

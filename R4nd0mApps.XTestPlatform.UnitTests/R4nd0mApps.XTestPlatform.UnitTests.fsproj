@@ -129,9 +129,11 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /frys $(ProjectDir)..\TestData $(TargetDir)TestData\
-</PostBuildEvent>
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <PostBuildEvent>xcopy /frys $(ProjectDir)..\TestData $(TargetDir)TestData\</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+    <PostBuildEvent>cp -a $(ProjectDir)..\TestData $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

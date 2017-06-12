@@ -2,7 +2,6 @@
 
 open Microsoft.FSharp.Reflection
 open System
-open System.Diagnostics
 open System.Reflection
 open System.Runtime.Serialization
 
@@ -14,7 +13,7 @@ type XTestMessageLevel =
     | Warning
     | Error
     static member KnownTypes() = 
-        typeof<StackFrame>.GetNestedTypes(BindingFlags.Public ||| BindingFlags.NonPublic) 
+        typeof<XTestMessageLevel>.GetNestedTypes(BindingFlags.Public ||| BindingFlags.NonPublic) 
         |> Array.filter FSharpType.IsUnion
 
 [<CLIMutable>]
@@ -30,20 +29,32 @@ type XTestCase =
 
 [<KnownType("KnownTypes")>]
 type XTestOutcome = 
-    | None
+    | NoOutcome
     | Passed
     | Failed
     | Skipped
     | NotFound
     static member KnownTypes() = 
-        typeof<StackFrame>.GetNestedTypes(BindingFlags.Public ||| BindingFlags.NonPublic) 
+        typeof<XTestOutcome>.GetNestedTypes(BindingFlags.Public ||| BindingFlags.NonPublic) 
         |> Array.filter FSharpType.IsUnion
+
+[<KnownType("KnownTypes")>]
+type XStackFrame = 
+    | XParsedFrame of string * string * int
+    | XUnparsedFrame of string
+    static member KnownTypes() = 
+        typeof<XStackFrame>.GetNestedTypes(BindingFlags.Public ||| BindingFlags.NonPublic) 
+        |> Array.filter FSharpType.IsUnion
+
+[<CLIMutable>]
+type XTestFailureInfo = 
+    { Message : string
+      CallStack : XStackFrame[] }
 
 [<CLIMutable>]
 type XTestResult = 
     { DisplayName : string
-      ErrorMessage : string
-      ErrorStackTrace : string
+      FailureInfo : XTestFailureInfo option
       Outcome : XTestOutcome
       TestCase : XTestCase }
 
@@ -61,4 +72,4 @@ type IXTestExecutor =
     abstract RunTests : tests:seq<XTestCase> -> unit
     abstract Cancel : unit -> unit
     abstract MessageLogged : IEvent<XTestMessageLevel * string>
-    abstract TestCompleted  : IEvent<XTestResult>
+    abstract TestExecuted  : IEvent<XTestResult>

@@ -1,6 +1,7 @@
 source https://www.nuget.org/api/v2
 
 nuget FSharp.Core 4.0.0.1 redirects: force
+nuget Mono.Cecil prerelease
 nuget xunit.runner.utility
 
 gist parthopdas/ccd06b223c0ae88ed9164f34cc1f5f06 YaFunTK.fs

@@ -3,6 +3,7 @@
 open R4nd0mApps.XTestPlatform.Api
 open R4nd0mApps.XTestPlatform.Implementation.XUnit.Converters
 open System
+open System.Collections.Generic
 open System.IO
 open System.Threading
 open Xunit
@@ -41,7 +42,6 @@ type XUnitTestDiscoverer() =
     let toXTestCase sfn source = XTestCase.FromITestCase sfn source >> testDiscovered.Trigger
     
     let discoverTests source = 
-        let source = source |> Path.GetFullPath
         let config = ConfigReader.Load(source, null)
         use xfc = 
             new XunitFrontController(config.AppDomainOrDefault, source, null, config.ShadowCopyOrDefault, null, null, 
@@ -53,7 +53,7 @@ type XUnitTestDiscoverer() =
     interface IXTestDiscoverer with
         member __.ExtensionUri : XExtensionUri = Constants.extensionUri
         member it.Id : string = it.GetType().FullName
-        member __.DiscoverTests(sources : seq<string>) : unit = sources |> Seq.iter discoverTests
+        member __.DiscoverTests(sources : seq<string>) : unit = sources |> Seq.iter (Path.GetFullPath >> discoverTests)
         member __.Cancel() : unit = failwith "Not implemented yet"
         member __.MessageLogged : IEvent<XTestMessageLevel * string> = messageLogged.Publish
         member __.TestDiscovered : IEvent<XTestCase> = testDiscovered.Publish
@@ -120,7 +120,7 @@ type XUnitTestExecutor() =
     let testCompleted = Event<_>()
     let toXTestResult sfn outcome = XTestResult.FromITestResultMessage sfn outcome
     
-    let runTests (source, tcs) = 
+    let runTests (source, tcs : seq<XTestCase>) = 
         let config = ConfigReader.Load(source, null)
         use xfc = 
             new XunitFrontController(config.AppDomainOrDefault, source, null, config.ShadowCopyOrDefault, null, null, 
@@ -129,15 +129,15 @@ type XUnitTestExecutor() =
         let tcs = 
             tcs
             |> Seq.map (fun tc -> tc.TestCase |> xfc.Deserialize, tc)
-            |> Seq.toList // NOTE: PARTHO: Force the enumeration other it gets enumerated from the other appdomain
+            |> Seq.toArray // NOTE: PARTHO: Force the enumeration other it gets enumerated from the other appdomain
         
         let tcMap = 
             tcs
             |> Seq.map (fun (x, y) -> x.UniqueID, y)
-            |> dict
+            |> Prelude.roDict
         
-        use execSink = new TestExecutionSink(toXTestResult (fun x -> tcMap.[x.UniqueID]), testCompleted.Trigger)
-        xfc.RunTests(tcs |> Seq.map fst, execSink, TestFrameworkOptions.ForExecution(config))
+        use execSink = new TestExecutionSink(toXTestResult tcMap, testCompleted.Trigger)
+        xfc.RunTests(tcs |> Array.map fst, execSink, TestFrameworkOptions.ForExecution(config))
         execSink.WaitForCompletion()
     
     interface IXTestExecutor with
@@ -150,5 +150,5 @@ type XUnitTestExecutor() =
             |> Seq.iter runTests
         
         member __.MessageLogged : IEvent<XTestMessageLevel * string> = messageLogged.Publish
-        member __.TestCompleted : IEvent<XTestResult> = testCompleted.Publish
+        member __.TestExecuted : IEvent<XTestResult> = testCompleted.Publish
         member __.Cancel() : unit = failwith "Not implemented yet"

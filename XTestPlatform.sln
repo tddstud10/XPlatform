@@ -14,19 +14,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "R4nd0mApps.XTestPlatform.Api", "R4nd0mApps.XTestPlatform.Api\R4nd0mApps.XTestPlatform.Api.fsproj", "{84693096-CBA0-518B-900A-3B48D21C5459}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "R4nd0mApps.XTestPlatform.Api", "R4nd0mApps.XTestPlatform.Api\R4nd0mApps.XTestPlatform.Api.fsproj", "{84693096-CBA0-518B-900A-3B48D21C5459}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "R4nd0mApps.XTestPlatform.VS", "R4nd0mApps.XTestPlatform.VS\R4nd0mApps.XTestPlatform.VS.fsproj", "{0A51D50A-893D-4082-9677-2ACF5DD943A4}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "R4nd0mApps.XTestPlatform.VS", "R4nd0mApps.XTestPlatform.VS\R4nd0mApps.XTestPlatform.VS.fsproj", "{0A51D50A-893D-4082-9677-2ACF5DD943A4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "R4nd0mApps.XTestPlatform.VS.UnitTests", "R4nd0mApps.XTestPlatform.VS.UnitTests\R4nd0mApps.XTestPlatform.VS.UnitTests.fsproj", "{0A51D50A-893D-5193-9677-2ACF5DD943A4}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "R4nd0mApps.XTestPlatform.VS.UnitTests", "R4nd0mApps.XTestPlatform.VS.UnitTests\R4nd0mApps.XTestPlatform.VS.UnitTests.fsproj", "{0A51D50A-893D-5193-9677-2ACF5DD943A4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "R4nd0mApps.XTestPlatform.XUnit", "R4nd0mApps.XTestPlatform.XUnit\R4nd0mApps.XTestPlatform.XUnit.fsproj", "{0A51E61B-893D-4082-9677-2ACF5DD943A4}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "R4nd0mApps.XTestPlatform.XUnit", "R4nd0mApps.XTestPlatform.XUnit\R4nd0mApps.XTestPlatform.XUnit.fsproj", "{0A51E61B-893D-4082-9677-2ACF5DD943A4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "R4nd0mApps.XTestPlatform.NUnit2", "R4nd0mApps.XTestPlatform.NUnit2\R4nd0mApps.XTestPlatform.NUnit2.fsproj", "{0A51F72C-893D-4082-9677-2ACF5DD943A4}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "R4nd0mApps.XTestPlatform.NUnit2", "R4nd0mApps.XTestPlatform.NUnit2\R4nd0mApps.XTestPlatform.NUnit2.fsproj", "{0A51F72C-893D-4082-9677-2ACF5DD943A4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "R4nd0mApps.XTestPlatform.NUnit3", "R4nd0mApps.XTestPlatform.NUnit3\R4nd0mApps.XTestPlatform.NUnit3.fsproj", "{0A51083D-893D-4082-9677-2ACF5DD943A4}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "R4nd0mApps.XTestPlatform.NUnit3", "R4nd0mApps.XTestPlatform.NUnit3\R4nd0mApps.XTestPlatform.NUnit3.fsproj", "{0A51083D-893D-4082-9677-2ACF5DD943A4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "R4nd0mApps.XTestPlatform.UnitTests", "R4nd0mApps.XTestPlatform.UnitTests\R4nd0mApps.XTestPlatform.UnitTests.fsproj", "{0A62D50A-893D-5193-9677-2ACF5DD943A4}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "R4nd0mApps.XTestPlatform.UnitTests", "R4nd0mApps.XTestPlatform.UnitTests\R4nd0mApps.XTestPlatform.UnitTests.fsproj", "{0A62D50A-893D-5193-9677-2ACF5DD943A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R4nd0mApps.XTestPlatform.CecilUtils", "R4nd0mApps.XTestPlatform.CecilUtils\R4nd0mApps.XTestPlatform.CecilUtils.csproj", "{A1438C12-7164-42B5-AC76-392682777428}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,10 @@ Global
 		{0A62D50A-893D-5193-9677-2ACF5DD943A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A62D50A-893D-5193-9677-2ACF5DD943A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A62D50A-893D-5193-9677-2ACF5DD943A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1438C12-7164-42B5-AC76-392682777428}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1438C12-7164-42B5-AC76-392682777428}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1438C12-7164-42B5-AC76-392682777428}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1438C12-7164-42B5-AC76-392682777428}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

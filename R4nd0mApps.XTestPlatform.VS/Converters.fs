@@ -64,7 +64,7 @@ type IRunContext with
 type XTestOutcome with
     static member Create = 
         function 
-        | TestOutcome.None -> XTestOutcome.None
+        | TestOutcome.None -> XTestOutcome.NoOutcome
         | TestOutcome.Passed -> XTestOutcome.Passed
         | TestOutcome.Failed -> XTestOutcome.Failed
         | TestOutcome.Skipped -> XTestOutcome.Skipped
@@ -76,8 +76,9 @@ type XTestResult with
         { DisplayName = x.DisplayName
           TestCase = XTestCase.Create x.TestCase
           Outcome = XTestOutcome.Create x.Outcome
-          ErrorStackTrace = x.ErrorStackTrace
-          ErrorMessage = x.ErrorMessage }
+          FailureInfo = 
+              { Message = x.ErrorMessage
+                CallStack = XCallStackParser.parse x.ErrorStackTrace } |> Some }
 
 type IFrameworkHandle with
     static member CreateFrameworkHandle (msgLogged : Event<_>) (testCompleted : Event<_>) = 

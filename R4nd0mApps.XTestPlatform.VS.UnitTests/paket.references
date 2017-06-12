@@ -1,4 +1,5 @@
 FSharp.Core
+Mono.Cecil
 File:YaFunTK.fs
 
 group Test

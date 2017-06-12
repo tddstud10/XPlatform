@@ -63,6 +63,7 @@
     <Content Include="paket.references" />
     <Compile Include="Domain.fs" />
     <Compile Include="AdapterLoader.fs" />
+    <Compile Include="XCallStackParser.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

@@ -27,7 +27,7 @@ type internal XTestExecutor() =
             failwith "Not implemented yet"
         member it.MessageLogged: IEvent<XTestMessageLevel * string> = 
             failwith "Not implemented yet"
-        member it.TestCompleted: IEvent<XTestResult> = 
+        member it.TestExecuted: IEvent<XTestResult> = 
             failwith "Not implemented yet"
         member it.Cancel(): unit = 
             failwith "Not implemented yet"

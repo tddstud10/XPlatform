@@ -30,6 +30,8 @@
 
     <file src="..\build\R4nd0mApps.XTestPlatform.XUnit.dll" target="lib\Xtensions\XUnit" /> 
     <file src="..\build\R4nd0mApps.XTestPlatform.XUnit.pdb" target="lib\Xtensions\XUnit" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.CecilUtils.dll" target="lib\Xtensions\XUnit" /> 
+    <file src="..\build\R4nd0mApps.XTestPlatform.CecilUtils.pdb" target="lib\Xtensions\XUnit" /> 
     <file src="..\build\xunit.abstractions.dll" target="lib\Xtensions\XUnit" /> 
     <file src="..\build\xunit.runner.utility.net35.dll" target="lib\Xtensions\XUnit" /> 
 

@@ -11,7 +11,9 @@ module Constants =
 module Converters = 
     open System.Security.Cryptography
     open System.Text
-    
+    open System.Collections.Generic
+    open R4nd0mApps.XTestPlatform.CecilUtils
+
     let guidFromString (s : string) = 
         s
         |> Encoding.Unicode.GetBytes
@@ -21,27 +23,26 @@ module Converters =
     
     type XTestCase with
         static member FromITestCase sfn src (tc : ITestCase) = 
-            let srcInfo = tc.SourceInformation |> Option.ofNull
+            let nd = NavigationDataProvider(src).GetNavigationData(tc.TestMethod.TestClass.Class.Name, tc.TestMethod.Method.Name)
             { TestCase = sfn tc
               Id = (Constants.extensionUri.ToString() + tc.UniqueID) |> guidFromString
               FullyQualifiedName = 
                   sprintf "%s.%s (%s)" tc.TestMethod.TestClass.Class.Name tc.TestMethod.Method.Name tc.UniqueID
               DisplayName = tc.DisplayName
               Source = src
-              CodeFilePath = srcInfo |> Option.fold (fun _ e -> e.FileName) null
-              LineNumber = srcInfo |> Option.fold (fun _ e -> e.LineNumber.GetValueOrDefault(0)) 0
+              CodeFilePath = nd.FilePath
+              LineNumber = nd.LineNumber
               ExtensionUri = Constants.extensionUri }
     
     type XTestResult with
         
-        static member FromITestResultMessage sfn outcome (tr : ITestResultMessage) = 
-            let tc = sfn tr.TestCase
+        static member FromITestResultMessage (tcMap : IReadOnlyDictionary<_, _>) outcome (tr : ITestResultMessage) = 
             { DisplayName = tr.Test.DisplayName
-              TestCase = tc
+              TestCase = tcMap.[tr.TestCase.UniqueID]
               Outcome = outcome
-              ErrorStackTrace = null
-              ErrorMessage = null }
+              FailureInfo = None }
         
         static member AddFailureInfo (msg : ITestFailed) (tr : XTestResult) = 
-            { tr with ErrorMessage = msg |> ExceptionUtility.CombineMessages
-                      ErrorStackTrace = msg |> ExceptionUtility.CombineStackTraces }
+            { tr with FailureInfo = 
+                          { Message = msg |> ExceptionUtility.CombineMessages
+                            CallStack = msg |> ExceptionUtility.CombineStackTraces |> XCallStackParser.parse } |> Some }
