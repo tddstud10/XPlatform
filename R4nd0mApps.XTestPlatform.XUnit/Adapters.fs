@@ -122,8 +122,9 @@ type XUnitTestExecutor() =
     
     let runTests (source, tcs : seq<XTestCase>) = 
         let config = ConfigReader.Load(source, null)
+        use sip = new NullSourceInformationProvider()
         use xfc = 
-            new XunitFrontController(config.AppDomainOrDefault, source, null, config.ShadowCopyOrDefault, null, null, 
+            new XunitFrontController(config.AppDomainOrDefault, source, null, config.ShadowCopyOrDefault, null, sip, 
                                      null)
         
         let tcs = 
