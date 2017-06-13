@@ -43,8 +43,9 @@ type XUnitTestDiscoverer() =
     
     let discoverTests source = 
         let config = ConfigReader.Load(source, null)
+        use sip = new NullSourceInformationProvider()
         use xfc = 
-            new XunitFrontController(config.AppDomainOrDefault, source, null, config.ShadowCopyOrDefault, null, null, 
+            new XunitFrontController(config.AppDomainOrDefault, source, null, config.ShadowCopyOrDefault, null, sip, 
                                      null)
         use discSink = new TestDiscoverySink(toXTestCase xfc.Serialize source)
         xfc.Find(true, discSink, TestFrameworkOptions.ForDiscovery(config))
