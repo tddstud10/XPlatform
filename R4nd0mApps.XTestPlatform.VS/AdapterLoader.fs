@@ -70,6 +70,7 @@ module AdapterLoader =
     let private loadDependencies _ = 
         [ "msdia120typelib_clr0200.dll"; "Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" ]
         |> List.map (Prelude.tuple2 (Path.getLocalPath()) >> Path.Combine)
+        |> List.filter (File.Exists)
         |> List.iter (Assembly.LoadFrom >> ignore)
     
     let LoadDiscoverersWithMap adaptersMap = 

@@ -5,18 +5,16 @@ open System.IO
 open System.Reflection
 
 let private invokeAPI<'T> adapterPaths apiName packagesPath = 
-    let x =
-        Assembly.GetExecutingAssembly().CodeBase
-        |> Uri
-        |> fun x -> x.LocalPath
-        |> Path.GetDirectoryName
-        |> fun x -> adapterPaths |> Seq.map (Prelude.tuple2 x)
-        |> Seq.map (Path.Combine >> Assembly.LoadFrom)
-        |> Seq.collect (fun a -> a.GetTypes())
-        |> Seq.choose (fun x -> 
-               if x.Name = "AdapterLoader" then Some x
-               else Option.None)
-    x
+    Assembly.GetExecutingAssembly().CodeBase
+    |> Uri
+    |> fun x -> x.LocalPath
+    |> Path.GetDirectoryName
+    |> fun x -> adapterPaths |> Seq.map (Prelude.tuple2 x)
+    |> Seq.map (Path.Combine >> Assembly.LoadFrom)
+    |> Seq.collect (fun a -> a.GetTypes())
+    |> Seq.choose (fun x -> 
+            if x.Name = "AdapterLoader" then Some x
+            else Option.None)
     |> Seq.map 
            (fun t -> 
            t.GetMethod(apiName, BindingFlags.Public ||| BindingFlags.Static).Invoke(null, [| packagesPath |]) :?> seq<'T>)
