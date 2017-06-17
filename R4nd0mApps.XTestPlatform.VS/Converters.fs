@@ -78,7 +78,7 @@ type XTestResult with
           TestCase = XTestCase.Create x.TestCase
           Outcome = XTestOutcome.Create x.Outcome
           FailureInfo = 
-              if x.Outcome <> TestOutcome.Failed then None
+              if x.Outcome = TestOutcome.Passed then None
               else 
                   { Message = x.ErrorMessage
                     CallStack = XCallStackParser.parse x.ErrorStackTrace }
