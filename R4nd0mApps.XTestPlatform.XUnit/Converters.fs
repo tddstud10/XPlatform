@@ -45,9 +45,12 @@ module Converters =
         
         static member AddFailureInfo (msg : ITestFailed) (tr : XTestResult) = 
             { tr with FailureInfo = 
-                          { Message = msg |> ExceptionUtility.CombineMessages
+                          { Message = 
+                                msg 
+                                |> ExceptionUtility.CombineMessages
+                                |> XTestErrorInfoParser.parseMessage
                             CallStack = 
                                 msg
                                 |> ExceptionUtility.CombineStackTraces
-                                |> XCallStackParser.parse }
+                                |> XTestErrorInfoParser.parseStackTrace }
                           |> Some }

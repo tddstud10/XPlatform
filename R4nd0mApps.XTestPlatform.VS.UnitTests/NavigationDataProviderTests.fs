@@ -5,7 +5,7 @@ open FsUnit.Xunit
 open R4nd0mApps.XTestPlatform.CecilUtils
 open System.IO
 
-let provider = typeof<NavigationDataProvider> |> Path.getAssemblyPath |> NavigationDataProvider 
+let provider = new NavigationDataProvider(typeof<NavigationDataProvider> |> Path.getAssemblyPath)
 
 [<InlineData("", "EmptyMethod_OneLine", "NavigationTestData.cs", 10)>]
 [<InlineData("", "EmptyMethod_TwoLines", "NavigationTestData.cs", 13)>]

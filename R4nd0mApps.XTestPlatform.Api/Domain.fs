@@ -12,9 +12,7 @@ type XTestMessageLevel =
     | Informational
     | Warning
     | Error
-    static member KnownTypes() = 
-        typeof<XTestMessageLevel>.GetNestedTypes(BindingFlags.Public ||| BindingFlags.NonPublic) 
-        |> Array.filter FSharpType.IsUnion
+    static member KnownTypes() = Serialization.knownTypes<XTestMessageLevel>()
 
 [<CLIMutable>]
 type XTestCase = 
@@ -34,22 +32,28 @@ type XTestOutcome =
     | Failed
     | Skipped
     | NotFound
-    static member KnownTypes() = 
-        typeof<XTestOutcome>.GetNestedTypes(BindingFlags.Public ||| BindingFlags.NonPublic) 
-        |> Array.filter FSharpType.IsUnion
+    static member KnownTypes() = Serialization.knownTypes<XTestOutcome>()
 
 [<KnownType("KnownTypes")>]
-type XStackFrame = 
-    | XParsedFrame of string * string * int
-    | XUnparsedFrame of string
-    static member KnownTypes() = 
-        typeof<XStackFrame>.GetNestedTypes(BindingFlags.Public ||| BindingFlags.NonPublic) 
-        |> Array.filter FSharpType.IsUnion
+type XErrorStackFrame = 
+    | XErrorParsedFrame of string * string * int
+    | XErrorUnparsedFrame of string
+    static member KnownTypes() = Serialization.knownTypes<XErrorStackFrame>()
+
+[<KnownType("KnownTypes")>]
+type XErrorStackTrace = 
+    | XErrorStackTrace of XErrorStackFrame[]
+    static member KnownTypes() = Serialization.knownTypes<XErrorStackTrace>()
+
+[<KnownType("KnownTypes")>]
+type XErrorMessage = 
+    | XErrorMessage of string
+    static member KnownTypes() = Serialization.knownTypes<XErrorMessage>()
 
 [<CLIMutable>]
 type XTestFailureInfo = 
-    { Message : string
-      CallStack : XStackFrame[] }
+    { Message : XErrorMessage
+      CallStack : XErrorStackTrace }
 
 [<CLIMutable>]
 type XTestResult = 

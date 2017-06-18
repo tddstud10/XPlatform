@@ -509,7 +509,7 @@ NUGET
       xunit.abstractions (>= 2.0.1) - framework: >= net35, netstandard11, >= netstandard15
 GIST
   remote: parthopdas/ccd06b223c0ae88ed9164f34cc1f5f06
-    YaFunTK.fs (84c2a0fbd9edc63a3f4bbfbd1b6e365cc1cc4a04)
+    YaFunTK.fs (1b03c5eb8839612923d59af2df95f0967686e601)
 GROUP Build
 NUGET
   remote: http://www.nuget.org/api/v2

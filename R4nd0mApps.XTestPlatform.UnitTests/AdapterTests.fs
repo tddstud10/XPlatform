@@ -7,8 +7,6 @@ open System.Collections.Concurrent
 open System.IO
 open global.Xunit
 
-let IsMSCLR = "Mono.Runtime" |> Type.GetType |> isNull
-
 let localPath = Path.getLocalPath()
 
 let testBin = 
@@ -68,7 +66,7 @@ let normalizeTests ts =
                        Source = Path.GetFileName(t.Source) })
 let ``Test Data - Can discover tests`` : obj array seq = 
     [ "R4nd0mApps.XTestPlatform.XUnit.dll", "executor://xtestplatform/xUnit" ]
-    @ if IsMSCLR then [ "R4nd0mApps.XTestPlatform.VS.dll", "executor://xunit/VsTestRunner2" ] else [ ]
+    @ if not Environment.IsMono then [ "R4nd0mApps.XTestPlatform.VS.dll", "executor://xunit/VsTestRunner2" ] else [ ]
     |> Seq.map (fun (a, b) -> [| box a; box b |])    
 
 [<Theory>]
@@ -93,10 +91,10 @@ let ``Can discover tests`` (adapter, extensionUri) =
 let expectedTestResults = 
     [ { DisplayName = "XUnit20FSPortable.UnitTests.Fact Test 2"
         FailureInfo = 
-            { Message = "Assert.Equal() Failure\r\nExpected: 1\r\nActual:   2"
-              CallStack = [| XParsedFrame ((if IsMSCLR then "XUnit20FSPortable.UnitTests.Fact Test 2()" else "XUnit20FSPortable.UnitTests.Fact Test 2 ()"), 
-                                           "D:\\src\\t\\TestProjects\\TestExecution\\TestData\\UnitTestProjects\\XUnit20FSPortable\\PortableLibrary1.fs", 
-                                           17) |] } |> Some
+            { Message = "Assert.Equal() Failure\r\nExpected: 1\r\nActual:   2" |> XErrorMessage
+              CallStack = [| XErrorParsedFrame ((if not Environment.IsMono then "XUnit20FSPortable.UnitTests.Fact Test 2()" else "XUnit20FSPortable.UnitTests.Fact Test 2 ()"), 
+                                                     "D:\\src\\t\\TestProjects\\TestExecution\\TestData\\UnitTestProjects\\XUnit20FSPortable\\PortableLibrary1.fs", 
+                                                     17) |] |> XErrorStackTrace } |> Some
         Outcome = XTestOutcome.Failed
         TestCase = emptyTestCase }
       { DisplayName = "XUnit20FSPortable.UnitTests.Theory Tests(input: 1)"
@@ -105,10 +103,10 @@ let expectedTestResults =
         TestCase = emptyTestCase }
       { DisplayName = "XUnit20FSPortable.UnitTests.Theory Tests(input: 2)"
         FailureInfo = 
-            { Message = "Assert.Equal() Failure\r\nExpected: 1\r\nActual:   2"
-              CallStack = [| XParsedFrame ((if IsMSCLR then "XUnit20FSPortable.UnitTests.Theory Tests(Int32 input)" else "XUnit20FSPortable.UnitTests.Theory Tests (System.Int32 input)"), 
-                                           "D:\\src\\t\\TestProjects\\TestExecution\\TestData\\UnitTestProjects\\XUnit20FSPortable\\PortableLibrary1.fs", 
-                                           9) |] } |> Some
+            { Message = "Assert.Equal() Failure\r\nExpected: 1\r\nActual:   2" |> XErrorMessage
+              CallStack = [| XErrorParsedFrame ((if not Environment.IsMono then "XUnit20FSPortable.UnitTests.Theory Tests(Int32 input)" else "XUnit20FSPortable.UnitTests.Theory Tests (System.Int32 input)"), 
+                                                      "D:\\src\\t\\TestProjects\\TestExecution\\TestData\\UnitTestProjects\\XUnit20FSPortable\\PortableLibrary1.fs", 
+                                                      9) |] |> XErrorStackTrace } |> Some
         Outcome = XTestOutcome.Failed
         TestCase = emptyTestCase }
       { DisplayName = "XUnit20FSPortable.UnitTests.Fact Test 1"
@@ -118,9 +116,14 @@ let expectedTestResults =
     |> List.sortBy (fun x -> x.DisplayName)
 
 let normalizeTestResults = 
+    let replace (s1: string) s2 (XErrorMessage m) =
+        m.Replace(s1, s2) |> XErrorMessage
+    let take n (XErrorStackTrace cs) =
+        cs |> Array.take n |> XErrorStackTrace
+
     let normalizeFailureInfoForMono x =
-        if IsMSCLR then x
-        else { x with Message = x.Message.Replace("\n", "\r\n"); CallStack = x.CallStack |> Array.take 1 }
+        if not Environment.IsMono then x
+        else { x with Message = x.Message |> replace "\n" "\r\n"; CallStack = x.CallStack |> take 1 }
     Seq.map (fun t -> 
             { t with 
                 XTestResult.TestCase = emptyTestCase
@@ -131,7 +134,7 @@ let stripSerializedTestCases x =
 
 let ``Test Data - Can execute tests`` : obj array seq = 
     [ "R4nd0mApps.XTestPlatform.XUnit.dll", "executor://xtestplatform/xUnit" ]
-    @ if IsMSCLR then [ "R4nd0mApps.XTestPlatform.VS.dll", "executor://xunit/VsTestRunner2" ] else [ ]
+    @ if not Environment.IsMono then [ "R4nd0mApps.XTestPlatform.VS.dll", "executor://xunit/VsTestRunner2" ] else [ ]
     |> Seq.map (fun (a, b) -> [| box a; box b |])    
 
 [<Theory>]

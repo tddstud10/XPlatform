@@ -80,8 +80,8 @@ type XTestResult with
           FailureInfo = 
               if x.Outcome = TestOutcome.Passed then None
               else 
-                  { Message = x.ErrorMessage
-                    CallStack = XCallStackParser.parse x.ErrorStackTrace }
+                  { Message = x.ErrorMessage |> XTestErrorInfoParser.parseMessage
+                    CallStack = x.ErrorStackTrace |> XTestErrorInfoParser.parseStackTrace }
                   |> Some }
 
 type IFrameworkHandle with

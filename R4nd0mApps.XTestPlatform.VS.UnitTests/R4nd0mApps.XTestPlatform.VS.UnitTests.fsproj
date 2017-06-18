@@ -102,7 +102,7 @@
     <Compile Include="AdapterLoaderTests.fs" />
     <Content Include="paket.references" />
     <Content Include="App.config" />
-    <Compile Include="XCallStackParserTests.fs" />
+    <Compile Include="XTestErrorInfoParserTests.fs" />
     <Compile Include="NavigationDataProviderTests.fs" />
   </ItemGroup>
   <ItemGroup>
