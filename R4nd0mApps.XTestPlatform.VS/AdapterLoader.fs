@@ -67,21 +67,17 @@ module AdapterLoader =
         if Directory.Exists dir then Directory.EnumerateFiles(dir, "*.TestAdapter.dll", SearchOption.AllDirectories)
         else Seq.empty<string>
     
-    let private loadDependencies _ = 
-        [ "msdia120typelib_clr0200.dll"; "Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" ]
-        |> List.map (Prelude.tuple2 (Path.getLocalPath()) >> Path.Combine)
-        |> List.filter (File.Exists)
-        |> List.iter (Assembly.LoadFrom >> ignore)
-    
+    let private deps = [ "msdia120typelib_clr0200.dll"; "Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" ]
+
     let LoadDiscoverersWithMap adaptersMap = 
-        Prelude.tee loadDependencies
+        Prelude.tee (Prelude.ct (DependencyLoader.registerDependencyResolver deps))
         >> findAdapterAssemblies
         >> Seq.choose (createAdapter<IXTestDiscoverer, XTestDiscoverer> adaptersMap (fun x -> x.Discoverer))
     
     let LoadDiscoverers : string -> seq<IXTestDiscoverer> = fun x -> LoadDiscoverersWithMap knownAdaptersMap x
     
     let LoadExecutorsWithMap adaptersMap = 
-        Prelude.tee loadDependencies
+        Prelude.tee (Prelude.ct (DependencyLoader.registerDependencyResolver deps))
         >> findAdapterAssemblies
         >> Seq.choose (createAdapter<IXTestExecutor, XTestExecutor> adaptersMap (fun x -> x.Executor))
     
