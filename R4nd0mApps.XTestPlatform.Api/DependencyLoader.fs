@@ -4,15 +4,9 @@ open System
 open System.IO
 open System.Reflection
 
-let registerDependencyResolver ds = 
+let registerDependencyResolver searchPath deps = 
     let resolveAssembly (ea : ResolveEventArgs) = 
-        if ea.RequestingAssembly = Assembly.GetCallingAssembly() then 
-            ds
-            |> List.map (Path.GetFileNameWithoutExtension >> String.toLowerInvariant)
-            |> List.tryFind ((=) (ea.Name |> String.toLowerInvariant))
-            |> Option.fold (fun _ -> 
-                   Prelude.tuple2 (Path.getLocalPath())
-                   >> Path.Combine
-                   >> Assembly.LoadFrom) null
-        else null
+        deps
+        |> List.tryFind (Path.GetFileNameWithoutExtension >> String.equalsOrdinalCI ea.Name)
+        |> Option.fold (fun _ -> (Prelude.tuple2 searchPath >> Path.Combine) >> Assembly.LoadFrom) null
     AppDomain.CurrentDomain.add_AssemblyResolve (ResolveEventHandler(Prelude.ct resolveAssembly))

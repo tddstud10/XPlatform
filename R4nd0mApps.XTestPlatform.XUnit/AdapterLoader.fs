@@ -8,10 +8,10 @@ module AdapterLoader =
     
     let LoadDiscoverers : string -> seq<IXTestDiscoverer> = 
         fun _ -> 
-            DependencyLoader.registerDependencyResolver deps
+            DependencyLoader.registerDependencyResolver (Path.getLocalPath()) deps
             [ XUnitTestDiscoverer() :> IXTestDiscoverer ] :> seq<_>
     
     let LoadExecutors : string -> seq<IXTestExecutor> = 
         fun _ -> 
-            DependencyLoader.registerDependencyResolver deps
+            DependencyLoader.registerDependencyResolver (Path.getLocalPath()) deps
             [ XUnitTestExecutor() :> IXTestExecutor ] :> seq<_>

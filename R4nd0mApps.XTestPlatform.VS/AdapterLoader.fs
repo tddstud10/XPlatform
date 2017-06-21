@@ -70,14 +70,14 @@ module AdapterLoader =
     let private deps = [ "msdia120typelib_clr0200.dll"; "Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" ]
 
     let LoadDiscoverersWithMap adaptersMap = 
-        Prelude.tee (Prelude.ct (DependencyLoader.registerDependencyResolver deps))
+        Prelude.tee (Prelude.ct (DependencyLoader.registerDependencyResolver (Path.getLocalPath()) deps))
         >> findAdapterAssemblies
         >> Seq.choose (createAdapter<IXTestDiscoverer, XTestDiscoverer> adaptersMap (fun x -> x.Discoverer))
     
     let LoadDiscoverers : string -> seq<IXTestDiscoverer> = fun x -> LoadDiscoverersWithMap knownAdaptersMap x
     
     let LoadExecutorsWithMap adaptersMap = 
-        Prelude.tee (Prelude.ct (DependencyLoader.registerDependencyResolver deps))
+        Prelude.tee (Prelude.ct (DependencyLoader.registerDependencyResolver (Path.getLocalPath()) deps))
         >> findAdapterAssemblies
         >> Seq.choose (createAdapter<IXTestExecutor, XTestExecutor> adaptersMap (fun x -> x.Executor))
     
